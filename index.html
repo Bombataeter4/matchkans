@@ -131,6 +131,9 @@
     .chip-option {
       display: block;
       cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .chip-option input {
       display: none;
@@ -699,14 +702,35 @@
       Object.entries(groupConfigs).forEach(([name, options]) => {
         const container = document.getElementById(`group-${name}`);
         container.innerHTML = '';
+
         options.forEach(option => {
           const label = document.createElement('label');
           label.className = 'chip-option';
-          label.innerHTML = `<input type="checkbox" name="${name}" value="${option.value}" ${option.checked ? 'checked' : ''}><span>${option.label}</span>`;
-          container.appendChild(label);
-          const input = label.querySelector('input');
-          const refresh = () => label.classList.toggle('active', input.checked);
+
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.name = name;
+          input.value = option.value;
+          input.checked = !!option.checked;
+
+          const span = document.createElement('span');
+          span.textContent = option.label;
+
+          const refresh = () => {
+            label.classList.toggle('active', input.checked);
+          };
+
+          label.addEventListener('click', (event) => {
+            event.preventDefault();
+            input.checked = !input.checked;
+            refresh();
+          });
+
           input.addEventListener('change', refresh);
+
+          label.appendChild(input);
+          label.appendChild(span);
+          container.appendChild(label);
           refresh();
         });
       });
@@ -948,4 +972,139 @@
 
       if (hardest && hardest.factor < 0.2) tips.push(`Je strengste filter is nu: ${hardest.label.toLowerCase()}.`);
       if (prefs.distance <= 20) tips.push('Een kleine afstand is vooral in dunner bevolkte provincies een sterke beperking.');
-      if (prefs.ageMax - prefs.ageMin <= 5) tips.push('Een bredere leeftijdsrange geeft va
+      if (prefs.ageMax - prefs.ageMin <= 5) tips.push('Een bredere leeftijdsrange geeft vaak meteen meer kans.');
+      if (prefs.education.length <= 1 && (prefs.education.includes('hbo') || prefs.education.includes('wo'))) tips.push('Een hoge opleiding als harde eis maakt je selectie kleiner.');
+      if (prefs.income >= 5000) tips.push('Een hoog minimum bruto maandinkomen wordt op jongere leeftijden snel zeldzaam.');
+      if (prefs.smoking.length === 1) tips.push('Rookgedrag kan de pool flink veranderen, vooral in combinatie met opleiding.');
+      if (prefs.bodycount.length <= 2) tips.push('Bodycount blijft in deze webapp de zachtste schatting.');
+      if (!tips.length) tips.push('Je filters zijn redelijk haalbaar. Een volgende stap zou postcode of gemeente toevoegen zijn voor nog realistischere afstand.');
+      return tips.slice(0, 4);
+    }
+
+    function calculateForTargetGender(targetGender, prefs) {
+      const base = population[targetGender];
+      const factors = {
+        Leeftijd: getAgeFactor(prefs.ageMin, prefs.ageMax),
+        Relatiestatus: getMaritalFactor(prefs.ageMin, prefs.ageMax, prefs.marital),
+        Kinderen: getChildrenGivenMaritalFactor(prefs.ageMin, prefs.ageMax, prefs.marital, prefs.children),
+        Opleidingsniveau: getEducationFactor(prefs.ageMin, prefs.ageMax, prefs.education),
+        Inkomen: getIncomeFactor(prefs.ageMin, prefs.ageMax, prefs.income, prefs.education),
+        Roken: getSmokingGivenEducationFactor(prefs.ageMin, prefs.ageMax, prefs.smoking, prefs.education),
+        Afstand: getDistanceFactor(prefs.distance, prefs.province),
+        Afkomst: getOriginFactor(prefs.ageMin, prefs.ageMax, prefs.origin),
+        Bodycount: getBodycountFactor(targetGender, prefs.ageMin, prefs.ageMax, prefs.bodycount),
+        Haarkleur: getAppearanceFactor(hairDistribution, prefs.hair),
+        Oogkleur: getAppearanceFactor(eyeColorDistribution, prefs.eyeColor),
+        Gewicht: getWeightFactor(targetGender, prefs.ageMin, prefs.ageMax, prefs.weightMin, prefs.weightMax),
+        Knapheid: looksMap[prefs.looks].factor,
+      };
+
+      const count = Object.values(factors).reduce((acc, value) => acc * value, base);
+      return { targetGender, base, factors, count };
+    }
+
+    function combineResults(results) {
+      const totalBase = results.reduce((sum, result) => sum + result.base, 0);
+      const totalCount = results.reduce((sum, result) => sum + result.count, 0);
+      const labels = Object.keys(results[0].factors);
+      const combinedFactors = {};
+
+      for (const label of labels) {
+        combinedFactors[label] = results.reduce((sum, result) => sum + (result.factors[label] * result.base), 0) / totalBase;
+      }
+
+      return { totalBase, totalCount, combinedFactors };
+    }
+
+    function calculateChance() {
+      const prefs = {
+        userGender: document.getElementById('userGender').value,
+        province: document.getElementById('province').value,
+        ageMin: Number(document.getElementById('ageMin').value),
+        ageMax: Number(document.getElementById('ageMax').value),
+        distance: Number(document.getElementById('distance').value),
+        income: Number(document.getElementById('income').value),
+        weightMin: Number(document.getElementById('weightMin').value),
+        weightMax: Number(document.getElementById('weightMax').value),
+        looks: Number(document.getElementById('looks').value),
+        targetGender: getSelectedValues('targetGender'),
+        marital: getSelectedValues('marital'),
+        children: getSelectedValues('children'),
+        education: getSelectedValues('education'),
+        smoking: getSelectedValues('smoking'),
+        origin: getSelectedValues('origin'),
+        bodycount: getSelectedValues('bodycount'),
+        hair: getSelectedValues('hair'),
+        eyeColor: getSelectedValues('eyeColor'),
+      };
+
+      if (!prefs.targetGender.length) {
+        alert('Selecteer minimaal één optie bij “Ik zoek”.');
+        return;
+      }
+
+      const results = prefs.targetGender.map(targetGender => calculateForTargetGender(targetGender, prefs));
+      const combined = combineResults(results);
+      const percent = combined.totalCount / combined.totalBase;
+      const difficulty = difficultyFromPercent(percent);
+
+      document.getElementById('matchCount').textContent = formatNumber(combined.totalCount);
+      document.getElementById('matchText').textContent = `Ongeveer ${formatNumber(combined.totalCount)} mensen vallen binnen jouw voorkeuren.`;
+      document.getElementById('matchPercent').textContent = formatPercent(percent);
+      document.getElementById('basePopulation').textContent = formatNumber(combined.totalBase);
+
+      const pill = document.getElementById('difficultyPill');
+      pill.style.display = 'inline-block';
+      pill.textContent = difficulty.label;
+      pill.className = `pill ${difficulty.className}`;
+
+      const breakdown = Object.entries(combined.combinedFactors).map(([label, factor]) => ({ label, factor }));
+      renderBreakdown(breakdown);
+      const tips = buildTips({ prefs, breakdown });
+      document.getElementById('tipsList').innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+    }
+
+    function resetForm() {
+      document.getElementById('userGender').value = 'vrouw';
+      document.getElementById('province').value = 'zuid-holland';
+      document.getElementById('ageMin').value = 25;
+      document.getElementById('ageMax').value = 35;
+      document.getElementById('distance').value = 25;
+      document.getElementById('income').value = 0;
+      document.getElementById('weightMin').value = 55;
+      document.getElementById('weightMax').value = 85;
+      document.getElementById('looks').value = 0;
+
+      Object.entries(groupConfigs).forEach(([name, options]) => {
+        const inputs = document.querySelectorAll(`input[name="${name}"]`);
+        inputs.forEach(input => {
+          const option = options.find(item => item.value === input.value);
+          input.checked = option ? option.checked : true;
+          input.dispatchEvent(new Event('change'));
+        });
+      });
+
+      syncAgeSliders();
+      syncWeightSliders();
+      updateDistanceLabel();
+      updateIncomeLabel();
+      updateLooksLabel();
+      document.getElementById('matchCount').textContent = '—';
+      document.getElementById('matchText').textContent = 'Vul je voorkeuren in en bereken je kans.';
+      document.getElementById('matchPercent').textContent = '—';
+      document.getElementById('basePopulation').textContent = '—';
+      document.getElementById('difficultyPill').style.display = 'none';
+      document.getElementById('breakdown').innerHTML = '<div class="breakdown-item"><span>Nog geen berekening</span><strong>—</strong></div>';
+      document.getElementById('tipsList').innerHTML = '<li>Maak eerst een berekening om tips te zien.</li>';
+    }
+
+    renderGroups();
+    document.getElementById('province').value = 'zuid-holland';
+    syncAgeSliders();
+    syncWeightSliders();
+    updateDistanceLabel();
+    updateIncomeLabel();
+    updateLooksLabel();
+  </script>
+</body>
+</html>
