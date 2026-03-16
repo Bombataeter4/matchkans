@@ -437,6 +437,8 @@
       'zuid-holland': { reach: 1.78 }, zeeland: { reach: 0.56 }, 'noord-brabant': { reach: 1.06 }, limburg: { reach: 0.83 }
     };
 
+    const ruralProvinces = ['groningen', 'friesland', 'drenthe', 'zeeland', 'limburg'];
+
     const ageBands = [
       { key: '18-24', start: 18, end: 24 },
       { key: '25-34', start: 25, end: 34 },
@@ -466,20 +468,20 @@
 
     const childrenByAgeAndMarital = {
       '18-24': {
-        single: { geen_kinderen: 0.95, heeft_kinderen: 0.05 },
-        niet_getrouwd: { geen_kinderen: 0.91, heeft_kinderen: 0.09 },
-        samenwonend: { geen_kinderen: 0.75, heeft_kinderen: 0.25 },
-        getrouwd: { geen_kinderen: 0.40, heeft_kinderen: 0.60 }
+        single: { geen_kinderen: 0.96, heeft_kinderen: 0.04 },
+        niet_getrouwd: { geen_kinderen: 0.92, heeft_kinderen: 0.08 },
+        samenwonend: { geen_kinderen: 0.80, heeft_kinderen: 0.20 },
+        getrouwd: { geen_kinderen: 0.48, heeft_kinderen: 0.52 }
       },
       '25-34': {
-        single: { geen_kinderen: 0.78, heeft_kinderen: 0.22 },
-        niet_getrouwd: { geen_kinderen: 0.68, heeft_kinderen: 0.32 },
-        samenwonend: { geen_kinderen: 0.52, heeft_kinderen: 0.48 },
-        getrouwd: { geen_kinderen: 0.35, heeft_kinderen: 0.65 }
+        single: { geen_kinderen: 0.80, heeft_kinderen: 0.20 },
+        niet_getrouwd: { geen_kinderen: 0.70, heeft_kinderen: 0.30 },
+        samenwonend: { geen_kinderen: 0.54, heeft_kinderen: 0.46 },
+        getrouwd: { geen_kinderen: 0.36, heeft_kinderen: 0.64 }
       },
       '35-44': {
-        single: { geen_kinderen: 0.45, heeft_kinderen: 0.55 },
-        niet_getrouwd: { geen_kinderen: 0.36, heeft_kinderen: 0.64 },
+        single: { geen_kinderen: 0.46, heeft_kinderen: 0.54 },
+        niet_getrouwd: { geen_kinderen: 0.37, heeft_kinderen: 0.63 },
         samenwonend: { geen_kinderen: 0.24, heeft_kinderen: 0.76 },
         getrouwd: { geen_kinderen: 0.18, heeft_kinderen: 0.82 }
       },
@@ -513,15 +515,15 @@
     };
 
     const incomeMedians = {
-      '18-24': { basisonderwijs: 1500, vmbo_mbo1: 1850, havo_vwo_mbo234: 2300, bachelor: 2800, master_doctor: 3200 },
-      '25-34': { basisonderwijs: 2100, vmbo_mbo1: 2550, havo_vwo_mbo234: 3500, bachelor: 4550, master_doctor: 5600 },
-      '35-44': { basisonderwijs: 2300, vmbo_mbo1: 2850, havo_vwo_mbo234: 4000, bachelor: 5200, master_doctor: 6500 },
-      '45-54': { basisonderwijs: 2350, vmbo_mbo1: 3000, havo_vwo_mbo234: 4200, bachelor: 5600, master_doctor: 7000 },
-      '55-64': { basisonderwijs: 2200, vmbo_mbo1: 2850, havo_vwo_mbo234: 4000, bachelor: 5300, master_doctor: 6500 },
-      '65-90': { basisonderwijs: 1650, vmbo_mbo1: 2100, havo_vwo_mbo234: 2750, bachelor: 3600, master_doctor: 4500 }
+      '18-24': { basisonderwijs: 1400, vmbo_mbo1: 1750, havo_vwo_mbo234: 2200, bachelor: 2700, master_doctor: 3100 },
+      '25-34': { basisonderwijs: 2000, vmbo_mbo1: 2450, havo_vwo_mbo234: 3350, bachelor: 4450, master_doctor: 5450 },
+      '35-44': { basisonderwijs: 2200, vmbo_mbo1: 2750, havo_vwo_mbo234: 3900, bachelor: 5100, master_doctor: 6350 },
+      '45-54': { basisonderwijs: 2250, vmbo_mbo1: 2900, havo_vwo_mbo234: 4100, bachelor: 5500, master_doctor: 6900 },
+      '55-64': { basisonderwijs: 2150, vmbo_mbo1: 2750, havo_vwo_mbo234: 3900, bachelor: 5200, master_doctor: 6400 },
+      '65-90': { basisonderwijs: 1600, vmbo_mbo1: 2050, havo_vwo_mbo234: 2700, bachelor: 3500, master_doctor: 4350 }
     };
 
-    const incomeSigma = 0.40;
+    const incomeSigma = 0.34;
 
     const originByAge = {
       '18-24': { nl_herkomst: 0.65, nl_buitenlandse_herkomst: 0.14, eu_geboren: 0.07, buiten_europa_geboren: 0.14 },
@@ -551,20 +553,20 @@
 
     const bodycountByAgeGender = {
       man: {
-        '18-24': { '0_1': 0.50, '2_5': 0.28, '6_10': 0.12, '11_20': 0.06, '21_plus': 0.04 },
-        '25-34': { '0_1': 0.18, '2_5': 0.24, '6_10': 0.22, '11_20': 0.18, '21_plus': 0.18 },
-        '35-44': { '0_1': 0.12, '2_5': 0.18, '6_10': 0.22, '11_20': 0.22, '21_plus': 0.26 },
-        '45-54': { '0_1': 0.10, '2_5': 0.17, '6_10': 0.21, '11_20': 0.22, '21_plus': 0.30 },
-        '55-64': { '0_1': 0.11, '2_5': 0.19, '6_10': 0.21, '11_20': 0.20, '21_plus': 0.29 },
-        '65-90': { '0_1': 0.16, '2_5': 0.23, '6_10': 0.20, '11_20': 0.17, '21_plus': 0.24 }
+        '18-24': { '0_1': 0.58, '2_5': 0.28, '6_10': 0.10, '11_20': 0.03, '21_plus': 0.01 },
+        '25-34': { '0_1': 0.23, '2_5': 0.28, '6_10': 0.22, '11_20': 0.15, '21_plus': 0.12 },
+        '35-44': { '0_1': 0.16, '2_5': 0.22, '6_10': 0.22, '11_20': 0.18, '21_plus': 0.22 },
+        '45-54': { '0_1': 0.13, '2_5': 0.20, '6_10': 0.21, '11_20': 0.19, '21_plus': 0.27 },
+        '55-64': { '0_1': 0.13, '2_5': 0.21, '6_10': 0.21, '11_20': 0.18, '21_plus': 0.27 },
+        '65-90': { '0_1': 0.18, '2_5': 0.24, '6_10': 0.20, '11_20': 0.16, '21_plus': 0.22 }
       },
       vrouw: {
-        '18-24': { '0_1': 0.56, '2_5': 0.25, '6_10': 0.10, '11_20': 0.05, '21_plus': 0.04 },
-        '25-34': { '0_1': 0.22, '2_5': 0.28, '6_10': 0.22, '11_20': 0.14, '21_plus': 0.14 },
-        '35-44': { '0_1': 0.16, '2_5': 0.22, '6_10': 0.22, '11_20': 0.18, '21_plus': 0.22 },
-        '45-54': { '0_1': 0.14, '2_5': 0.20, '6_10': 0.21, '11_20': 0.18, '21_plus': 0.27 },
-        '55-64': { '0_1': 0.15, '2_5': 0.22, '6_10': 0.20, '11_20': 0.17, '21_plus': 0.26 },
-        '65-90': { '0_1': 0.19, '2_5': 0.25, '6_10': 0.19, '11_20': 0.15, '21_plus': 0.22 }
+        '18-24': { '0_1': 0.62, '2_5': 0.24, '6_10': 0.09, '11_20': 0.03, '21_plus': 0.02 },
+        '25-34': { '0_1': 0.27, '2_5': 0.30, '6_10': 0.20, '11_20': 0.13, '21_plus': 0.10 },
+        '35-44': { '0_1': 0.19, '2_5': 0.23, '6_10': 0.21, '11_20': 0.17, '21_plus': 0.20 },
+        '45-54': { '0_1': 0.16, '2_5': 0.21, '6_10': 0.20, '11_20': 0.17, '21_plus': 0.26 },
+        '55-64': { '0_1': 0.16, '2_5': 0.22, '6_10': 0.20, '11_20': 0.16, '21_plus': 0.26 },
+        '65-90': { '0_1': 0.20, '2_5': 0.25, '6_10': 0.19, '11_20': 0.15, '21_plus': 0.21 }
       }
     };
 
@@ -573,9 +575,9 @@
 
     const looksMap = {
       0: { label: 'Maakt niet uit', factor: 1 },
-      1: { label: 'Gemiddeld of hoger', factor: 0.55 },
-      2: { label: 'Bovengemiddeld', factor: 0.22 },
-      3: { label: 'Zeer knap', factor: 0.06 }
+      1: { label: 'Gemiddeld of hoger', factor: 0.50 },
+      2: { label: 'Bovengemiddeld', factor: 0.18 },
+      3: { label: 'Zeer knap', factor: 0.04 }
     };
 
     const weightMeans = {
@@ -642,6 +644,10 @@
       return selectedValues.reduce((sum, value) => sum + (obj[value] || 0), 0);
     }
 
+    function onlySelected(arr, value) {
+      return arr.length === 1 && arr[0] === value;
+    }
+
     function getMaritalFactor(ageMin, ageMax, selectedStatuses) {
       return getAgeWeightedFactor(ageMin, ageMax, bandKey => sumSelected(maritalByAge[bandKey], selectedStatuses));
     }
@@ -699,8 +705,9 @@
     }
 
     function getBodycountFactor(targetGender, ageMin, ageMax, selectedBodycount) {
+      if (selectedBodycount.length >= 5) return 1;
       const raw = getAgeWeightedFactor(ageMin, ageMax, bandKey => sumSelected(bodycountByAgeGender[targetGender][bandKey], selectedBodycount));
-      if (selectedBodycount.length === 1) return raw * 0.82;
+      if (selectedBodycount.length === 1) return raw * 0.80;
       if (selectedBodycount.length === 2) return raw * 0.92;
       return raw;
     }
@@ -726,6 +733,39 @@
       });
     }
 
+    function getCombinationPenalty(targetGender, prefs) {
+      let penalty = 1;
+
+      const onlyChildren = onlySelected(prefs.children, 'heeft_kinderen');
+      const onlyMarried = onlySelected(prefs.marital, 'getrouwd');
+      const onlyPartnered = prefs.marital.length > 0 && prefs.marital.every(v => ['samenwonend', 'getrouwd'].includes(v));
+
+      if (prefs.ageMax <= 19 && onlyChildren) penalty *= 0.03;
+      else if (prefs.ageMax <= 21 && onlyChildren) penalty *= 0.08;
+      else if (prefs.ageMax <= 24 && onlyChildren) penalty *= 0.28;
+
+      if (prefs.ageMax <= 21 && onlyMarried) penalty *= 0.04;
+      else if (prefs.ageMax <= 24 && onlyMarried) penalty *= 0.16;
+      else if (prefs.ageMax <= 24 && onlyPartnered) penalty *= 0.45;
+
+      if (prefs.ageMax <= 21 && prefs.income >= 4000) penalty *= 0.55;
+      if (prefs.ageMax <= 21 && prefs.income >= 5000) penalty *= 0.22;
+      if (prefs.ageMax <= 24 && prefs.income >= 5000) penalty *= 0.38;
+      if (prefs.ageMax <= 24 && prefs.income >= 7000) penalty *= 0.20;
+
+      if (prefs.ageMax <= 24 && prefs.education.length === 1 && prefs.education[0] === 'master_doctor') penalty *= 0.10;
+      if (prefs.ageMax <= 24 && prefs.education.length === 1 && prefs.education[0] === 'bachelor' && prefs.income >= 6000) penalty *= 0.45;
+
+      if (prefs.looks >= 2 && prefs.hair.length === 1 && prefs.eyeColor.length === 1) penalty *= 0.82;
+      if (prefs.looks >= 3 && prefs.bodycount.length === 1 && prefs.bodycount[0] === '0_1') penalty *= 0.72;
+
+      if (prefs.distance <= 10 && ruralProvinces.includes(prefs.province)) penalty *= 0.72;
+      else if (prefs.distance <= 10) penalty *= 0.86;
+      if (prefs.distance <= 5) penalty *= 0.85;
+
+      return Math.max(0.01, Math.min(1, penalty));
+    }
+
     function formatNumber(value) {
       return new Intl.NumberFormat('nl-NL').format(Math.round(value));
     }
@@ -747,9 +787,9 @@
     }
 
     function difficultyFromPercent(percent) {
-      if (percent >= 0.04) return 'Redelijk haalbaar';
-      if (percent >= 0.01) return 'Best selectief';
-      if (percent >= 0.0025) return 'Erg selectief';
+      if (percent >= 0.03) return 'Redelijk haalbaar';
+      if (percent >= 0.0075) return 'Best selectief';
+      if (percent >= 0.0015) return 'Erg selectief';
       return 'Bijzonder zeldzaam';
     }
 
@@ -798,6 +838,12 @@
       if (hardest && hardest.factor < 0.20) {
         tips.push(`Je strengste filter is nu: ${hardest.label.toLowerCase()}.`);
       }
+      if (prefs.ageMax <= 24 && onlySelected(prefs.children, 'heeft_kinderen')) {
+        tips.push('Heel jong én kinderen is in Nederland uitzonderlijk, dus die combinatie zakt extra hard.');
+      }
+      if (prefs.ageMax <= 24 && prefs.income >= 5000) {
+        tips.push('Een hoog inkomen op jonge leeftijd is zeldzaam en wordt daarom extra afgestraft.');
+      }
       if (prefs.distance <= 20) {
         tips.push('Een kleine afstand knijpt de pool sneller af dan veel mensen denken.');
       }
@@ -807,10 +853,7 @@
       if (prefs.education.length === 1 && (prefs.education[0] === 'bachelor' || prefs.education[0] === 'master_doctor')) {
         tips.push('Een hoog opleidingsniveau als harde eis maakt je selectie flink kleiner.');
       }
-      if (prefs.income >= 5000) {
-        tips.push('Een hoog bruto maandinkomen wordt vooral op jongere leeftijden snel zeldzaam.');
-      }
-      if (percent < 0.0025) {
+      if (percent < 0.0015) {
         tips.push('Je profiel is nu echt uitzonderlijk specifiek. Eén zachter filter kan veel schelen.');
       }
       if (!tips.length) {
@@ -835,7 +878,8 @@
         Haarkleur: getAppearanceFactor(hairDistribution, prefs.hair),
         Oogkleur: getAppearanceFactor(eyeColorDistribution, prefs.eyeColor),
         Gewicht: getWeightFactor(targetGender, prefs.ageMin, prefs.ageMax, prefs.weightMin, prefs.weightMax),
-        Knapheid: looksMap[prefs.looks].factor
+        Knapheid: looksMap[prefs.looks].factor,
+        'Zeldzame combinatie': getCombinationPenalty(targetGender, prefs)
       };
       const count = Object.values(factors).reduce((acc, value) => acc * value, base);
       return { base, factors, count };
@@ -946,5 +990,4 @@
   </script>
 </body>
 </html>
-
 
