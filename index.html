@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MatchKans</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: white;
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+    }
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.1;
+    }
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      opacity: 0.92;
+      font-size: 1.05rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.07);
+    }
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.35rem;
+    }
+    .field {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      background: white;
+    }
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .inline-note {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .result-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .big-number {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      margin: 8px 0;
+      color: #1d4ed8;
+    }
+    .pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin-top: 6px;
+    }
+    .easy { background: #dcfce7; color: #166534; }
+    .medium { background: #fef3c7; color: #92400e; }
+    .hard { background: #fee2e2; color: #991b1b; }
+    ul {
+      padding-left: 18px;
+      margin-bottom: 0;
+    }
+    .muted {
+      color: #6b7280;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .stat {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+    }
+    .stat strong {
+      display: block;
+      font-size: 1.25rem;
+      margin-top: 6px;
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>Hoe groot is jouw matchkans?</h1>
+      <p>
+        Vul in wie je zoekt en krijg een grove schatting van hoeveel mensen in Nederland ongeveer aan jouw voorkeuren voldoen.
+        Deze demo gebruikt voorbeeldpercentages en is bedoeld als eerste MVP. Ook filters zoals gewicht, oogkleur en knapheid zijn hier bewust grove schattingen.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Jouw voorkeuren</h2>
+
+        <div class="field">
+          <label for="gender">Ik zoek</label>
+          <select id="gender">
+            <option value="vrouw">Vrouw</option>
+            <option value="man">Man</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Leeftijd</label>
+          <div class="range-row">
+            <input id="ageMin" type="number" min="18" max="90" value="25" />
+            <input id="ageMax" type="number" min="18" max="90" value="35" />
+          </div>
+          <div class="inline-note">Van links naar rechts: minimum en maximum leeftijd.</div>
+        </div>
+
+        <div class="field">
+          <label for="marital">Relatiestatus</label>
+          <select id="marital">
+            <option value="maakt_niet_uit">Maakt niet uit</option>
+            <option value="niet_getrouwd">Niet getrouwd</option>
+            <option value="single">Single</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="children">Kinderen</label>
+          <select id="children">
+            <option value="maakt_niet_uit">Maakt niet uit</option>
+            <option value="geen_kinderen">Geen kinderen</option>
+            <option value="heeft_kinderen">Heeft kinderen</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="income">Minimaal inkomen per jaar</label>
+          <select id="income">
+            <option value="0">Geen minimum</option>
+            <option value="30000">€30.000+</option>
+            <option value="50000">€50.000+</option>
+            <option value="75000">€75.000+</option>
+            <option value="100000">€100.000+</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="hair">Haarkleur</label>
+          <select id="hair">
+            <option value="maakt_niet_uit">Maakt niet uit</option>
+            <option value="donker">Donker</option>
+            <option value="blond">Blond</option>
+            <option value="bruin">Bruin</option>
+            <option value="rood">Rood</option>
+            <option value="zwart">Zwart</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="eyeColor">Oogkleur</label>
+          <select id="eyeColor">
+            <option value="maakt_niet_uit">Maakt niet uit</option>
+            <option value="bruin">Bruin</option>
+            <option value="blauw">Blauw</option>
+            <option value="groen">Groen</option>
+            <option value="grijs">Grijs</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="weight">Gewichtsklasse</label>
+          <select id="weight">
+            <option value="maakt_niet_uit">Maakt niet uit</option>
+            <option value="licht">Licht</option>
+            <option value="gemiddeld">Gemiddeld</option>
+            <option value="zwaarder">Zwaarder</option>
+          </select>
+          <div class="inline-note">Voor MVP beter als grove categorie dan als exact aantal kilo's.</div>
+        </div>
+
+        <div class="field">
+          <label for="looks">Knapheid</label>
+          <select id="looks">
+            <option value="maakt_niet_uit">Maakt niet uit</option>
+            <option value="gemiddeld_plus">Gemiddeld of hoger</option>
+            <option value="boven_gemiddeld">Bovengemiddeld</option>
+            <option value="zeer_knap">Zeer knap</option>
+          </select>
+          <div class="inline-note">Dit is een subjectieve MVP-schatting, geen objectieve maat.</div>
+        </div>
+
+        <div class="button-row">
+          <button class="primary" onclick="calculateChance()">Bereken mijn kans</button>
+          <button class="secondary" onclick="resetForm()">Reset</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Resultaat</h2>
+        <div class="result-box">
+          <div class="muted">Geschatte matchgroep in Nederland</div>
+          <div id="matchCount" class="big-number">—</div>
+          <div id="matchText">Vul je voorkeuren in en bereken je score.</div>
+          <div id="difficultyPill" class="pill medium" style="display:none"></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            Potentieel percentage
+            <strong id="matchPercent">—</strong>
+          </div>
+          <div class="stat">
+            Basisdoelgroep
+            <strong id="basePopulation">—</strong>
+          </div>
+        </div>
+
+        <h3>Tips om je kans te vergroten</h3>
+        <ul id="tipsList">
+          <li>Maak eerst een berekening om tips te zien.</li>
+        </ul>
+
+        <p class="muted" style="margin-top:20px;">
+          Let op: dit is een indicatieve berekening. In deze demo behandelen we filters als losse schattingen.
+          In een latere versie kun je dit vervangen door echte CBS-data of kruistabellen.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const population = {
+      vrouw: 8700000,
+      man: 8600000,
+    };
+
+    const ageDistribution = {
+      '18-24': 0.12,
+      '25-34': 0.18,
+      '35-44': 0.16,
+      '45-54': 0.15,
+      '55-64': 0.14,
+      '65-90': 0.25,
+    };
+
+    const maritalDistribution = {
+      maakt_niet_uit: 1,
+      niet_getrouwd: 0.62,
+      single: 0.41,
+    };
+
+    const childrenDistribution = {
+      maakt_niet_uit: 1,
+      geen_kinderen: 0.52,
+      heeft_kinderen: 0.48,
+    };
+
+    const incomeDistribution = {
+      0: 1,
+      30000: 0.58,
+      50000: 0.31,
+      75000: 0.12,
+      100000: 0.05,
+    };
+
+    const hairDistribution = {
+      maakt_niet_uit: 1,
+      donker: 0.28,
+      blond: 0.22,
+      bruin: 0.34,
+      rood: 0.04,
+      zwart: 0.12,
+    };
+
+    const eyeColorDistribution = {
+      maakt_niet_uit: 1,
+      bruin: 0.52,
+      blauw: 0.30,
+      groen: 0.10,
+      grijs: 0.08,
+    };
+
+    const weightDistribution = {
+      maakt_niet_uit: 1,
+      licht: 0.24,
+      gemiddeld: 0.51,
+      zwaarder: 0.25,
+    };
+
+    const looksDistribution = {
+      maakt_niet_uit: 1,
+      gemiddeld_plus: 0.50,
+      boven_gemiddeld: 0.25,
+      zeer_knap: 0.10,
+    };
+
+    function overlapShare(min, max, start, end) {
+      const overlapStart = Math.max(min, start);
+      const overlapEnd = Math.min(max, end);
+      if (overlapEnd < overlapStart) return 0;
+      return (overlapEnd - overlapStart + 1) / (end - start + 1);
+    }
+
+    function getAgeFactor(ageMin, ageMax) {
+      const bands = [
+        { key: '18-24', start: 18, end: 24 },
+        { key: '25-34', start: 25, end: 34 },
+        { key: '35-44', start: 35, end: 44 },
+        { key: '45-54', start: 45, end: 54 },
+        { key: '55-64', start: 55, end: 64 },
+        { key: '65-90', start: 65, end: 90 },
+      ];
+
+      let factor = 0;
+      for (const band of bands) {
+        const share = overlapShare(ageMin, ageMax, band.start, band.end);
+        factor += share * ageDistribution[band.key];
+      }
+      return factor;
+    }
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat('nl-NL').format(Math.round(value));
+    }
+
+    function formatPercent(value) {
+      return new Intl.NumberFormat('nl-NL', {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value);
+    }
+
+    function difficultyFromPercent(percent) {
+      if (percent >= 0.08) return { label: 'Ruime keuze', className: 'easy' };
+      if (percent >= 0.02) return { label: 'Best selectief', className: 'medium' };
+      return { label: 'Erg selectief', className: 'hard' };
+    }
+
+    function buildTips({ ageMin, ageMax, marital, children, income, hair, eyeColor, weight, looks, percent }) {
+      const tips = [];
+
+      if (ageMax - ageMin <= 5) {
+        tips.push('Vergroot je leeftijdsrange. Met een bredere range stijgt je matchgroep vaak flink.');
+      }
+      if (marital === 'single') {
+        tips.push('Je filter “single” is streng. “Niet getrouwd” geeft meestal een grotere potentiële groep.');
+      }
+      if (children === 'geen_kinderen') {
+        tips.push('“Geen kinderen” verlaagt je groep merkbaar. Kijk of “maakt niet uit” voor jou ook acceptabel is.');
+      }
+      if (Number(income) >= 75000) {
+        tips.push('Een hoog inkomensminimum maakt je selectie snel veel kleiner.');
+      }
+      if (hair !== 'maakt_niet_uit') {
+        tips.push('Uiterlijke voorkeuren zoals haarkleur maken je pool kleiner zonder iets te zeggen over compatibiliteit.');
+      }
+      if (eyeColor !== 'maakt_niet_uit') {
+        tips.push('Oogkleur is een smalle esthetische filter en verkleint je potentiële groep snel.');
+      }
+      if (weight !== 'maakt_niet_uit') {
+        tips.push('Gewicht werkt in een MVP beter als grove categorie dan als exacte maat.');
+      }
+      if (looks !== 'maakt_niet_uit') {
+        tips.push('Knapheid is subjectief. Gebruik dit liever als speelse indicatie dan als harde eis.');
+      }
+      if (percent < 0.01) {
+        tips.push('Je huidige voorkeuren zijn heel specifiek. Overweeg om 1 of 2 filters minder hard te maken.');
+      }
+      if (!tips.length) {
+        tips.push('Je filters zijn vrij realistisch. De volgende stap is locatie en wederzijdse voorkeuren meenemen.');
+      }
+      return tips;
+    }
+
+    function calculateChance() {
+      const gender = document.getElementById('gender').value;
+      const ageMin = Number(document.getElementById('ageMin').value);
+      const ageMax = Number(document.getElementById('ageMax').value);
+      const marital = document.getElementById('marital').value;
+      const children = document.getElementById('children').value;
+      const income = document.getElementById('income').value;
+      const hair = document.getElementById('hair').value;
+      const eyeColor = document.getElementById('eyeColor').value;
+      const weight = document.getElementById('weight').value;
+      const looks = document.getElementById('looks').value;
+
+      if (ageMin < 18 || ageMax > 90 || ageMin > ageMax) {
+        alert('Controleer de leeftijd. Gebruik een minimum vanaf 18 en zorg dat minimum niet hoger is dan maximum.');
+        return;
+      }
+
+      const base = population[gender];
+      const ageFactor = getAgeFactor(ageMin, ageMax);
+      const maritalFactor = maritalDistribution[marital];
+      const childrenFactor = childrenDistribution[children];
+      const incomeFactor = incomeDistribution[income];
+      const hairFactor = hairDistribution[hair];
+      const eyeColorFactor = eyeColorDistribution[eyeColor];
+      const weightFactor = weightDistribution[weight];
+      const looksFactor = looksDistribution[looks];
+
+      const result = base * ageFactor * maritalFactor * childrenFactor * incomeFactor * hairFactor * eyeColorFactor * weightFactor * looksFactor;
+      const percent = result / base;
+      const difficulty = difficultyFromPercent(percent);
+      const tips = buildTips({ ageMin, ageMax, marital, children, income, hair, eyeColor, weight, looks, percent });
+
+      document.getElementById('matchCount').textContent = formatNumber(result);
+      document.getElementById('matchText').textContent = `Ongeveer ${formatNumber(result)} ${gender === 'vrouw' ? 'vrouwen' : 'mannen'} in Nederland voldoen aan jouw selectie.`;
+      document.getElementById('matchPercent').textContent = formatPercent(percent);
+      document.getElementById('basePopulation').textContent = formatNumber(base);
+
+      const pill = document.getElementById('difficultyPill');
+      pill.style.display = 'inline-block';
+      pill.textContent = difficulty.label;
+      pill.className = `pill ${difficulty.className}`;
+
+      const tipsList = document.getElementById('tipsList');
+      tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+    }
+
+    function resetForm() {
+      document.getElementById('gender').value = 'vrouw';
+      document.getElementById('ageMin').value = 25;
+      document.getElementById('ageMax').value = 35;
+      document.getElementById('marital').value = 'maakt_niet_uit';
+      document.getElementById('children').value = 'maakt_niet_uit';
+      document.getElementById('income').value = '0';
+      document.getElementById('hair').value = 'maakt_niet_uit';
+      document.getElementById('eyeColor').value = 'maakt_niet_uit';
+      document.getElementById('weight').value = 'maakt_niet_uit';
+      document.getElementById('looks').value = 'maakt_niet_uit';
+      document.getElementById('matchCount').textContent = '—';
+      document.getElementById('matchText').textContent = 'Vul je voorkeuren in en bereken je score.';
+      document.getElementById('matchPercent').textContent = '—';
+      document.getElementById('basePopulation').textContent = '—';
+      document.getElementById('difficultyPill').style.display = 'none';
+      document.getElementById('tipsList').innerHTML = '<li>Maak eerst een berekening om tips te zien.</li>';
+    }
+  </script>
+</body>
+</html>
