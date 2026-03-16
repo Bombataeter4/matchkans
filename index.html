@@ -18,7 +18,7 @@
       min-height: 100vh;
     }
     .container {
-      max-width: 1160px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 32px 16px 40px;
     }
@@ -74,7 +74,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
-    label {
+    label.section-label {
       display: block;
       font-weight: 700;
       margin-bottom: 8px;
@@ -91,7 +91,7 @@
       outline: none;
     }
     option { color: #111827; }
-    .range-pair, .range-single {
+    .range-pair, .range-single, .group-box {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 20px;
@@ -117,6 +117,40 @@
       line-height: 1.45;
       margin-top: 8px;
       opacity: 0.92;
+    }
+    .group-box h4 {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+      color: #ffe7f5;
+    }
+    .chip-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .chip-option {
+      display: block;
+      cursor: pointer;
+    }
+    .chip-option input {
+      display: none;
+    }
+    .chip-option span {
+      display: block;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      color: #ffe7f5;
+      font-size: 0.92rem;
+      line-height: 1.25;
+      transition: all 0.18s ease;
+    }
+    .chip-option.active span {
+      background: linear-gradient(135deg, rgba(251, 113, 133, 0.24), rgba(244, 114, 182, 0.22));
+      border-color: rgba(255,255,255,0.20);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(244, 114, 182, 0.14);
     }
     .button-row {
       display: flex;
@@ -219,14 +253,14 @@
     footer {
       margin-top: 26px;
       padding: 18px 10px 4px;
-      text-align: center;
       color: #e8bfd3;
-      font-size: 0.85rem;
-      line-height: 1.55;
-      opacity: 0.85;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      opacity: 0.88;
     }
     @media (max-width: 920px) {
       .grid, .field-grid, .stats { grid-template-columns: 1fr; }
+      .chip-group { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
     }
   </style>
 </head>
@@ -243,46 +277,41 @@
 
         <div class="field-grid">
           <div class="field">
-            <label for="userGender">Jij bent</label>
+            <label class="section-label" for="userGender">Jij bent</label>
             <select id="userGender">
               <option value="vrouw">Vrouw</option>
               <option value="man">Man</option>
             </select>
           </div>
           <div class="field">
-            <label for="targetGender">Ik zoek</label>
-            <select id="targetGender">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="vrouw">Vrouw</option>
-              <option value="man">Man</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-grid">
-          <div class="field">
-            <label for="sexuality">Seksuele voorkeur</label>
-            <select id="sexuality">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="hetero">Hetero</option>
-              <option value="homo_lesbisch">Homo / lesbisch</option>
-              <option value="bi_pan">Bi / pan</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="urbanity">Jouw woonomgeving</label>
-            <select id="urbanity">
-              <option value="zeer_stedelijk">Zeer stedelijk</option>
-              <option value="stedelijk">Stedelijk</option>
-              <option value="gemiddeld">Gemiddeld stedelijk</option>
-              <option value="dorp">Dorp / weinig stedelijk</option>
-              <option value="landelijk">Landelijk</option>
+            <label class="section-label" for="province">Jouw provincie</label>
+            <select id="province">
+              <option value="groningen">Groningen</option>
+              <option value="friesland">Friesland</option>
+              <option value="drenthe">Drenthe</option>
+              <option value="overijssel">Overijssel</option>
+              <option value="flevoland">Flevoland</option>
+              <option value="gelderland">Gelderland</option>
+              <option value="utrecht">Utrecht</option>
+              <option value="noord-holland">Noord-Holland</option>
+              <option value="zuid-holland">Zuid-Holland</option>
+              <option value="zeeland">Zeeland</option>
+              <option value="noord-brabant">Noord-Brabant</option>
+              <option value="limburg">Limburg</option>
             </select>
           </div>
         </div>
 
         <div class="field">
-          <label>Leeftijd</label>
+          <label class="section-label">Ik zoek</label>
+          <div class="group-box">
+            <div id="group-targetGender" class="chip-group"></div>
+            <div class="inline-note">Laat alles geselecteerd als het niet uitmaakt.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="section-label">Leeftijd</label>
           <div class="range-pair">
             <div class="range-values">
               <span>Min: <span id="ageMinValue">25</span></span>
@@ -294,113 +323,92 @@
         </div>
 
         <div class="field">
-          <label>Afstand tot jou</label>
+          <label class="section-label">Afstand tot jou</label>
           <div class="range-single">
             <div class="range-values">
               <span>Maximaal</span>
               <span id="distanceValue">25 km</span>
             </div>
             <input id="distance" type="range" min="5" max="250" step="5" value="25" oninput="updateDistanceLabel()" />
-            <div class="inline-note">Binnen dezelfde afstand heb je in grote steden meestal meer potentiële matches dan in landelijk gebied.</div>
+            <div class="inline-note">De afstandskans is gebaseerd op jouw provincie en de bevolkingsdichtheid daar.</div>
           </div>
         </div>
 
         <div class="field-grid">
           <div class="field">
-            <label for="marital">Relatiestatus</label>
-            <select id="marital">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="single">Single</option>
-              <option value="niet_getrouwd">Niet getrouwd</option>
-              <option value="samenwonend">Samenwonend</option>
-              <option value="getrouwd">Getrouwd</option>
-            </select>
+            <label class="section-label">Relatiestatus</label>
+            <div class="group-box">
+              <div id="group-marital" class="chip-group"></div>
+            </div>
           </div>
           <div class="field">
-            <label for="children">Kinderen</label>
-            <select id="children">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="geen_kinderen">Geen kinderen</option>
-              <option value="heeft_kinderen">Heeft kinderen</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-grid">
-          <div class="field">
-            <label for="education">Opleidingsniveau</label>
-            <select id="education">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="laag">Laag / vmbo / mbo-1</option>
-              <option value="midden">Mbo-2-4 / havo / vwo</option>
-              <option value="hbo">Hbo</option>
-              <option value="wo">Universiteit</option>
-              <option value="hbo_wo">Hbo of universiteit</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Minimaal bruto inkomen per maand</label>
-            <div class="range-single">
-              <div class="range-values">
-                <span>Minimum</span>
-                <span id="incomeValue">Geen minimum</span>
-              </div>
-              <input id="income" type="range" min="0" max="12000" step="100" value="0" oninput="updateIncomeLabel()" />
-              <div class="inline-note">Leeftijd en opleiding trekken dit model mee: een hoog inkomen is bijvoorbeeld zeldzamer bij 18–25 dan bij 45+.</div>
+            <label class="section-label">Kinderen</label>
+            <div class="group-box">
+              <div id="group-children" class="chip-group"></div>
             </div>
           </div>
         </div>
 
         <div class="field-grid">
           <div class="field">
-            <label for="origin">Afkomst / achtergrond</label>
-            <select id="origin">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="nl_herkomst">Nederlandse herkomst</option>
-              <option value="nl_buitenlandse_herkomst">In Nederland geboren met buitenlandse herkomst</option>
-              <option value="eu_geboren">In Europa geboren</option>
-              <option value="buiten_europa_geboren">Buiten Europa geboren</option>
-            </select>
+            <label class="section-label">Opleidingsniveau</label>
+            <div class="group-box">
+              <div id="group-education" class="chip-group"></div>
+            </div>
           </div>
           <div class="field">
-            <label for="bodycount">Bodycount</label>
-            <select id="bodycount">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="0_1">0–1</option>
-              <option value="2_5">2–5</option>
-              <option value="6_10">6–10</option>
-              <option value="11_20">11–20</option>
-              <option value="21_plus">21+</option>
-            </select>
+            <label class="section-label">Roken</label>
+            <div class="group-box">
+              <div id="group-smoking" class="chip-group"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="section-label">Minimaal bruto inkomen per maand</label>
+          <div class="range-single">
+            <div class="range-values">
+              <span>Minimum</span>
+              <span id="incomeValue">Geen minimum</span>
+            </div>
+            <input id="income" type="range" min="0" max="12000" step="100" value="0" oninput="updateIncomeLabel()" />
+            <div class="inline-note">Leeftijd en opleiding trekken dit mee: een hoog inkomen is zeldzamer bij jongere leeftijden en bij lagere opleidingsniveaus.</div>
           </div>
         </div>
 
         <div class="field-grid">
           <div class="field">
-            <label for="hair">Haarkleur</label>
-            <select id="hair">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="donker">Donker</option>
-              <option value="blond">Blond</option>
-              <option value="bruin">Bruin</option>
-              <option value="rood">Rood</option>
-              <option value="zwart">Zwart</option>
-            </select>
+            <label class="section-label">Afkomst / achtergrond</label>
+            <div class="group-box">
+              <div id="group-origin" class="chip-group"></div>
+            </div>
           </div>
           <div class="field">
-            <label for="eyeColor">Oogkleur</label>
-            <select id="eyeColor">
-              <option value="maakt_niet_uit">Maakt niet uit</option>
-              <option value="bruin">Bruin</option>
-              <option value="blauw">Blauw</option>
-              <option value="groen">Groen</option>
-              <option value="grijs">Grijs</option>
-            </select>
+            <label class="section-label">Bodycount</label>
+            <div class="group-box">
+              <div id="group-bodycount" class="chip-group"></div>
+              <div class="mini">Deze variabele blijft de grofste gedragsmatige schatting in het model.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label class="section-label">Haarkleur</label>
+            <div class="group-box">
+              <div id="group-hair" class="chip-group"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="section-label">Oogkleur</label>
+            <div class="group-box">
+              <div id="group-eyeColor" class="chip-group"></div>
+            </div>
           </div>
         </div>
 
         <div class="field">
-          <label>Gewicht in kilo's</label>
+          <label class="section-label">Gewicht in kilo's</label>
           <div class="range-pair">
             <div class="range-values">
               <span>Min: <span id="weightMinValue">55</span> kg</span>
@@ -412,7 +420,7 @@
         </div>
 
         <div class="field">
-          <label>Knapheid</label>
+          <label class="section-label">Knapheid</label>
           <div class="range-single">
             <div class="range-values">
               <span>Niveau</span>
@@ -462,7 +470,7 @@
     </div>
 
     <footer>
-      Disclaimer: deze uitkomst is gebaseerd op statistische schattingen en modelaannames. Leeftijd, relatiestatus, opleiding, inkomen, woonomgeving en afstand zijn samenhangend gemodelleerd. Filters zoals afkomst, bodycount, knapheid, haar- en oogkleur zijn grover en minder hard statistisch onderbouwd.
+      Disclaimer: deze uitkomst is gebaseerd op statistische schattingen en modelaannames. Leeftijd, relatiestatus, kinderen, opleiding, inkomen, roken, afstand en provincie zijn samenhangend gemodelleerd. Filters zoals bodycount, knapheid, haar- en oogkleur zijn grover en minder hard statistisch onderbouwd. Gebaseerd op: CBS Dashboard bevolking; CBS StatLine 03759NED; CBS Regionale kerncijfers Nederland 70072NED; CBS 85525NED en maatwerk “Opleidingsniveau naar leeftijd en geslacht, 1 oktober 2024”; CBS 85453NED; CBS 85464NED / 85457NED; CBS Dashboard Herkomst; Rutgers Monitor seksuele gezondheid 2023 en 2024.
     </footer>
   </div>
 
@@ -470,6 +478,21 @@
     const population = {
       vrouw: 9065576,
       man: 8978451,
+    };
+
+    const provinceData = {
+      groningen: { label: 'Groningen', reach: 0.72 },
+      friesland: { label: 'Friesland', reach: 0.68 },
+      drenthe: { label: 'Drenthe', reach: 0.63 },
+      overijssel: { label: 'Overijssel', reach: 0.84 },
+      flevoland: { label: 'Flevoland', reach: 0.80 },
+      gelderland: { label: 'Gelderland', reach: 0.93 },
+      utrecht: { label: 'Utrecht', reach: 1.42 },
+      'noord-holland': { label: 'Noord-Holland', reach: 1.55 },
+      'zuid-holland': { label: 'Zuid-Holland', reach: 1.78 },
+      zeeland: { label: 'Zeeland', reach: 0.56 },
+      'noord-brabant': { label: 'Noord-Brabant', reach: 1.06 },
+      limburg: { label: 'Limburg', reach: 0.83 },
     };
 
     const ageBands = [
@@ -491,12 +514,12 @@
     };
 
     const maritalByAge = {
-      '18-24': { maakt_niet_uit: 1, single: 0.82, niet_getrouwd: 0.98, samenwonend: 0.07, getrouwd: 0.02 },
-      '25-34': { maakt_niet_uit: 1, single: 0.43, niet_getrouwd: 0.74, samenwonend: 0.23, getrouwd: 0.14 },
-      '35-44': { maakt_niet_uit: 1, single: 0.28, niet_getrouwd: 0.49, samenwonend: 0.20, getrouwd: 0.31 },
-      '45-54': { maakt_niet_uit: 1, single: 0.25, niet_getrouwd: 0.42, samenwonend: 0.17, getrouwd: 0.41 },
-      '55-64': { maakt_niet_uit: 1, single: 0.22, niet_getrouwd: 0.39, samenwonend: 0.16, getrouwd: 0.45 },
-      '65-90': { maakt_niet_uit: 1, single: 0.19, niet_getrouwd: 0.47, samenwonend: 0.11, getrouwd: 0.42 },
+      '18-24': { single: 0.82, niet_getrouwd: 0.98, samenwonend: 0.07, getrouwd: 0.02 },
+      '25-34': { single: 0.43, niet_getrouwd: 0.74, samenwonend: 0.23, getrouwd: 0.14 },
+      '35-44': { single: 0.28, niet_getrouwd: 0.49, samenwonend: 0.20, getrouwd: 0.31 },
+      '45-54': { single: 0.25, niet_getrouwd: 0.42, samenwonend: 0.17, getrouwd: 0.41 },
+      '55-64': { single: 0.22, niet_getrouwd: 0.39, samenwonend: 0.16, getrouwd: 0.45 },
+      '65-90': { single: 0.19, niet_getrouwd: 0.47, samenwonend: 0.11, getrouwd: 0.42 },
     };
 
     const childrenByAgeAndMarital = {
@@ -539,12 +562,12 @@
     };
 
     const educationByAge = {
-      '18-24': { laag: 0.32, midden: 0.50, hbo: 0.11, wo: 0.05, hbo_wo: 0.16 },
-      '25-34': { laag: 0.14, midden: 0.29, hbo: 0.29, wo: 0.26, hbo_wo: 0.55 },
-      '35-44': { laag: 0.18, midden: 0.34, hbo: 0.28, wo: 0.18, hbo_wo: 0.46 },
-      '45-54': { laag: 0.24, midden: 0.39, hbo: 0.22, wo: 0.13, hbo_wo: 0.35 },
-      '55-64': { laag: 0.29, midden: 0.42, hbo: 0.18, wo: 0.10, hbo_wo: 0.28 },
-      '65-90': { laag: 0.40, midden: 0.31, hbo: 0.17, wo: 0.08, hbo_wo: 0.25 },
+      '18-24': { laag: 0.32, midden: 0.50, hbo: 0.11, wo: 0.05 },
+      '25-34': { laag: 0.14, midden: 0.29, hbo: 0.29, wo: 0.26 },
+      '35-44': { laag: 0.18, midden: 0.34, hbo: 0.28, wo: 0.18 },
+      '45-54': { laag: 0.24, midden: 0.39, hbo: 0.22, wo: 0.13 },
+      '55-64': { laag: 0.29, midden: 0.42, hbo: 0.18, wo: 0.10 },
+      '65-90': { laag: 0.40, midden: 0.31, hbo: 0.17, wo: 0.08 },
     };
 
     const incomeMedians = {
@@ -567,23 +590,20 @@
       '65-90': { nl_herkomst: 0.82, nl_buitenlandse_herkomst: 0.06, eu_geboren: 0.04, buiten_europa_geboren: 0.08 },
     };
 
-    const orientationByAgeGender = {
-      man: {
-        '18-24': { hetero: 0.79, homo_lesbisch: 0.04, bi_pan: 0.17 },
-        '25-34': { hetero: 0.82, homo_lesbisch: 0.04, bi_pan: 0.14 },
-        '35-44': { hetero: 0.86, homo_lesbisch: 0.04, bi_pan: 0.10 },
-        '45-54': { hetero: 0.89, homo_lesbisch: 0.04, bi_pan: 0.07 },
-        '55-64': { hetero: 0.91, homo_lesbisch: 0.04, bi_pan: 0.05 },
-        '65-90': { hetero: 0.95, homo_lesbisch: 0.03, bi_pan: 0.02 },
-      },
-      vrouw: {
-        '18-24': { hetero: 0.74, homo_lesbisch: 0.02, bi_pan: 0.24 },
-        '25-34': { hetero: 0.79, homo_lesbisch: 0.02, bi_pan: 0.19 },
-        '35-44': { hetero: 0.84, homo_lesbisch: 0.02, bi_pan: 0.14 },
-        '45-54': { hetero: 0.89, homo_lesbisch: 0.01, bi_pan: 0.10 },
-        '55-64': { hetero: 0.92, homo_lesbisch: 0.01, bi_pan: 0.07 },
-        '65-90': { hetero: 0.96, homo_lesbisch: 0.01, bi_pan: 0.03 },
-      },
+    const smokingBaseByAge = {
+      '18-24': 0.19,
+      '25-34': 0.21,
+      '35-44': 0.19,
+      '45-54': 0.18,
+      '55-64': 0.17,
+      '65-90': 0.09,
+    };
+
+    const smokingEducationModifier = {
+      laag: 1.35,
+      midden: 1.10,
+      hbo: 0.80,
+      wo: 0.62,
     };
 
     const bodycountByAgeGender = {
@@ -605,22 +625,8 @@
       },
     };
 
-    const hairDistribution = {
-      maakt_niet_uit: 1,
-      donker: 0.28,
-      blond: 0.22,
-      bruin: 0.34,
-      rood: 0.04,
-      zwart: 0.12,
-    };
-
-    const eyeColorDistribution = {
-      maakt_niet_uit: 1,
-      bruin: 0.52,
-      blauw: 0.30,
-      groen: 0.10,
-      grijs: 0.08,
-    };
+    const hairDistribution = { donker: 0.28, blond: 0.22, bruin: 0.34, rood: 0.04, zwart: 0.12 };
+    const eyeColorDistribution = { bruin: 0.52, blauw: 0.30, groen: 0.10, grijs: 0.08 };
 
     const looksMap = {
       0: { label: 'Maakt niet uit', factor: 1 },
@@ -629,20 +635,86 @@
       3: { label: 'Zeer knap', factor: 0.15 },
     };
 
-    const urbanityReach = {
-      zeer_stedelijk: 1.9,
-      stedelijk: 1.45,
-      gemiddeld: 1.1,
-      dorp: 0.8,
-      landelijk: 0.6,
-    };
-
     const weightMeans = {
       vrouw: { '18-24': 65, '25-34': 68, '35-44': 72, '45-54': 75, '55-64': 76, '65-90': 73 },
       man: { '18-24': 76, '25-34': 81, '35-44': 86, '45-54': 88, '55-64': 87, '65-90': 83 },
     };
 
     const weightSd = { vrouw: 13, man: 14 };
+
+    const groupConfigs = {
+      targetGender: [
+        { value: 'vrouw', label: 'Vrouw', checked: true },
+        { value: 'man', label: 'Man', checked: true },
+      ],
+      marital: [
+        { value: 'single', label: 'Single', checked: true },
+        { value: 'niet_getrouwd', label: 'Niet getrouwd', checked: true },
+        { value: 'samenwonend', label: 'Samenwonend', checked: true },
+        { value: 'getrouwd', label: 'Getrouwd', checked: true },
+      ],
+      children: [
+        { value: 'geen_kinderen', label: 'Geen kinderen', checked: true },
+        { value: 'heeft_kinderen', label: 'Heeft kinderen', checked: true },
+      ],
+      education: [
+        { value: 'laag', label: 'Laag', checked: true },
+        { value: 'midden', label: 'Midden', checked: true },
+        { value: 'hbo', label: 'Hbo', checked: true },
+        { value: 'wo', label: 'Universiteit', checked: true },
+      ],
+      smoking: [
+        { value: 'nee', label: 'Rookt niet', checked: true },
+        { value: 'ja', label: 'Rookt wel', checked: true },
+      ],
+      origin: [
+        { value: 'nl_herkomst', label: 'Nederlandse herkomst', checked: true },
+        { value: 'nl_buitenlandse_herkomst', label: 'NL geboren, buitenlandse herkomst', checked: true },
+        { value: 'eu_geboren', label: 'In Europa geboren', checked: true },
+        { value: 'buiten_europa_geboren', label: 'Buiten Europa geboren', checked: true },
+      ],
+      bodycount: [
+        { value: '0_1', label: '0–1', checked: true },
+        { value: '2_5', label: '2–5', checked: true },
+        { value: '6_10', label: '6–10', checked: true },
+        { value: '11_20', label: '11–20', checked: true },
+        { value: '21_plus', label: '21+', checked: true },
+      ],
+      hair: [
+        { value: 'donker', label: 'Donker', checked: true },
+        { value: 'blond', label: 'Blond', checked: true },
+        { value: 'bruin', label: 'Bruin', checked: true },
+        { value: 'rood', label: 'Rood', checked: true },
+        { value: 'zwart', label: 'Zwart', checked: true },
+      ],
+      eyeColor: [
+        { value: 'bruin', label: 'Bruin', checked: true },
+        { value: 'blauw', label: 'Blauw', checked: true },
+        { value: 'groen', label: 'Groen', checked: true },
+        { value: 'grijs', label: 'Grijs', checked: true },
+      ],
+    };
+
+    function renderGroups() {
+      Object.entries(groupConfigs).forEach(([name, options]) => {
+        const container = document.getElementById(`group-${name}`);
+        container.innerHTML = '';
+        options.forEach(option => {
+          const label = document.createElement('label');
+          label.className = 'chip-option';
+          label.innerHTML = `<input type="checkbox" name="${name}" value="${option.value}" ${option.checked ? 'checked' : ''}><span>${option.label}</span>`;
+          container.appendChild(label);
+          const input = label.querySelector('input');
+          const refresh = () => label.classList.toggle('active', input.checked);
+          input.addEventListener('change', refresh);
+          refresh();
+        });
+      });
+    }
+
+    function getSelectedValues(name) {
+      return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(input => input.value);
+    }
 
     function overlapYears(min, max, start, end) {
       const overlapStart = Math.max(min, start);
@@ -699,72 +771,99 @@
       return 1 - normalCDF(z, 0, 1);
     }
 
-    function getEducationOptions(selection) {
-      if (selection === 'hbo_wo') return ['hbo', 'wo'];
-      return [selection];
+    function sumSelected(obj, selectedValues) {
+      if (!selectedValues.length) return 0;
+      return selectedValues.reduce((sum, value) => sum + (obj[value] || 0), 0);
     }
 
-    function getEducationFactor(ageMin, ageMax, selection) {
-      if (selection === 'maakt_niet_uit') return 1;
-      return getAgeWeightedFactor(ageMin, ageMax, bandKey => educationByAge[bandKey][selection] || 0);
+    function getMaritalFactor(ageMin, ageMax, selectedStatuses) {
+      if (!selectedStatuses.length) return 0;
+      return getAgeWeightedFactor(ageMin, ageMax, bandKey => sumSelected(maritalByAge[bandKey], selectedStatuses));
     }
 
-    function getBandIncomeFactor(bandKey, incomeMin, educationSelection) {
-      if (incomeMin <= 0) return 1;
+    function getChildrenGivenMaritalFactor(ageMin, ageMax, selectedMarital, selectedChildren) {
+      if (!selectedChildren.length) return 0;
+      if (selectedChildren.length === Object.keys(childrenByAgeAndMarital['18-24'].single).length) return 1;
+      if (!selectedMarital.length) return 0;
 
-      const categories = educationSelection === 'maakt_niet_uit'
-        ? ['laag', 'midden', 'hbo', 'wo']
-        : getEducationOptions(educationSelection);
-
-      let totalWeight = 0;
-      let weightedTail = 0;
-
-      for (const category of categories) {
-        const weight = educationByAge[bandKey][category] || 0;
-        if (!weight) continue;
-        const tail = logNormalTail(incomeMin, incomeMedians[bandKey][category], incomeSigma);
-        weightedTail += weight * tail;
-        totalWeight += weight;
-      }
-
-      if (totalWeight === 0) return 0;
-      return weightedTail / totalWeight;
-    }
-
-    function getIncomeFactor(ageMin, ageMax, incomeMin, educationSelection) {
-      return getAgeWeightedFactor(ageMin, ageMax, bandKey => getBandIncomeFactor(bandKey, incomeMin, educationSelection));
-    }
-
-    function getMaritalFactor(ageMin, ageMax, marital) {
-      if (marital === 'maakt_niet_uit') return 1;
-      return getAgeWeightedFactor(ageMin, ageMax, bandKey => maritalByAge[bandKey][marital]);
-    }
-
-    function getChildrenFactor(ageMin, ageMax, marital, children) {
-      if (children === 'maakt_niet_uit') return 1;
       return getAgeWeightedFactor(ageMin, ageMax, bandKey => {
-        if (marital !== 'maakt_niet_uit') {
-          return childrenByAgeAndMarital[bandKey][marital][children];
+        const maritalProb = sumSelected(maritalByAge[bandKey], selectedMarital);
+        if (maritalProb <= 0) return 0;
+        let joint = 0;
+        for (const status of selectedMarital) {
+          const statusProb = maritalByAge[bandKey][status] || 0;
+          const childProb = sumSelected(childrenByAgeAndMarital[bandKey][status], selectedChildren);
+          joint += statusProb * childProb;
         }
-        const mix = maritalByAge[bandKey];
-        const statuses = ['single', 'niet_getrouwd', 'samenwonend', 'getrouwd'];
-        let total = 0;
-        for (const status of statuses) {
-          total += mix[status] * childrenByAgeAndMarital[bandKey][status][children];
-        }
-        return total;
+        return joint / maritalProb;
       });
     }
 
-    function getOriginFactor(ageMin, ageMax, origin) {
-      if (origin === 'maakt_niet_uit') return 1;
-      return getAgeWeightedFactor(ageMin, ageMax, bandKey => originByAge[bandKey][origin] || 0);
+    function getEducationFactor(ageMin, ageMax, selectedEducation) {
+      if (!selectedEducation.length) return 0;
+      return getAgeWeightedFactor(ageMin, ageMax, bandKey => sumSelected(educationByAge[bandKey], selectedEducation));
     }
 
-    function getDistanceFactor(distanceKm, urbanity) {
-      const boost = urbanityReach[urbanity];
-      const effective = distanceKm * boost;
-      const factor = 1 - Math.exp(-Math.pow(effective / 38, 1.35));
+    function getIncomeFactor(ageMin, ageMax, incomeMin, selectedEducation) {
+      if (incomeMin <= 0) return 1;
+      if (!selectedEducation.length) return 0;
+
+      return getAgeWeightedFactor(ageMin, ageMax, bandKey => {
+        const selectedWeight = sumSelected(educationByAge[bandKey], selectedEducation);
+        if (selectedWeight <= 0) return 0;
+        let weightedTail = 0;
+        for (const category of selectedEducation) {
+          const weight = educationByAge[bandKey][category] || 0;
+          if (!weight) continue;
+          const tail = logNormalTail(incomeMin, incomeMedians[bandKey][category], incomeSigma);
+          weightedTail += weight * tail;
+        }
+        return weightedTail / selectedWeight;
+      });
+    }
+
+    function getSmokingGivenEducationFactor(ageMin, ageMax, selectedSmoking, selectedEducation) {
+      if (!selectedSmoking.length) return 0;
+      if (selectedSmoking.length === 2) return 1;
+      if (!selectedEducation.length) return 0;
+
+      return getAgeWeightedFactor(ageMin, ageMax, bandKey => {
+        const selectedWeight = sumSelected(educationByAge[bandKey], selectedEducation);
+        if (selectedWeight <= 0) return 0;
+        let smokerProbability = 0;
+        for (const category of selectedEducation) {
+          const eduShare = educationByAge[bandKey][category] || 0;
+          const raw = smokingBaseByAge[bandKey] * smokingEducationModifier[category];
+          const smokeRate = Math.max(0.03, Math.min(0.45, raw));
+          smokerProbability += eduShare * smokeRate;
+        }
+        smokerProbability /= selectedWeight;
+        const nonSmokerProbability = 1 - smokerProbability;
+        return selectedSmoking.includes('ja') ? smokerProbability : nonSmokerProbability;
+      });
+    }
+
+    function getOriginFactor(ageMin, ageMax, selectedOrigins) {
+      if (!selectedOrigins.length) return 0;
+      return getAgeWeightedFactor(ageMin, ageMax, bandKey => sumSelected(originByAge[bandKey], selectedOrigins));
+    }
+
+    function getBodycountFactor(targetGender, ageMin, ageMax, selectedBodycount) {
+      if (!selectedBodycount.length) return 0;
+      return getAgeWeightedFactor(ageMin, ageMax, bandKey => sumSelected(bodycountByAgeGender[targetGender][bandKey], selectedBodycount));
+    }
+
+    function getAppearanceFactor(distribution, selectedValues) {
+      if (!selectedValues.length) return 0;
+      const keys = Object.keys(distribution);
+      if (selectedValues.length >= keys.length) return 1;
+      return sumSelected(distribution, selectedValues);
+    }
+
+    function getDistanceFactor(distanceKm, provinceKey) {
+      const reach = provinceData[provinceKey].reach;
+      const effective = distanceKm * reach;
+      const factor = 1 - Math.exp(-Math.pow(effective / 36, 1.35));
       return Math.max(0.01, Math.min(1, factor));
     }
 
@@ -775,36 +874,6 @@
         const lower = normalCDF(weightMin, mean, sd);
         const upper = normalCDF(weightMax, mean, sd);
         return Math.max(0.01, upper - lower);
-      });
-    }
-
-    function getBodycountFactor(targetGender, ageMin, ageMax, bodycount) {
-      if (bodycount === 'maakt_niet_uit') return 1;
-      return getAgeWeightedFactor(ageMin, ageMax, bandKey => bodycountByAgeGender[targetGender][bandKey][bodycount] || 0);
-    }
-
-    function isOrientationCompatible(userGender, targetGender, orientation) {
-      if (orientation === 'bi_pan') return true;
-      if (orientation === 'hetero') return userGender !== targetGender;
-      if (orientation === 'homo_lesbisch') return userGender === targetGender;
-      return false;
-    }
-
-    function getOrientationFactor(userGender, targetGender, ageMin, ageMax, sexualitySelection) {
-      return getAgeWeightedFactor(ageMin, ageMax, bandKey => {
-        const shares = orientationByAgeGender[targetGender][bandKey];
-
-        if (sexualitySelection !== 'maakt_niet_uit') {
-          return isOrientationCompatible(userGender, targetGender, sexualitySelection)
-            ? shares[sexualitySelection]
-            : 0;
-        }
-
-        let total = 0;
-        for (const key of ['hetero', 'homo_lesbisch', 'bi_pan']) {
-          if (isOrientationCompatible(userGender, targetGender, key)) total += shares[key];
-        }
-        return total;
       });
     }
 
@@ -877,153 +946,6 @@
       const tips = [];
       const hardest = [...breakdown].sort((a, b) => a.factor - b.factor)[0];
 
-      if (hardest && hardest.factor < 0.2) {
-        tips.push(`Je strengste filter is nu: ${hardest.label.toLowerCase()}.`);
-      }
-      if (prefs.distance <= 20) {
-        tips.push('Een kleine afstand is vooral buiten stedelijke gebieden een sterke beperking.');
-      }
-      if (prefs.ageMax - prefs.ageMin <= 5) {
-        tips.push('Een bredere leeftijdsrange geeft vaak meteen meer kans.');
-      }
-      if (prefs.education === 'wo' || prefs.education === 'hbo_wo') {
-        tips.push('Een hoog opleidingsniveau als eis maakt je selectie kleiner, vooral buiten grote steden.');
-      }
-      if (prefs.income >= 5000) {
-        tips.push('Een hoog minimum bruto maandinkomen wordt op jongere leeftijden snel zeldzaam.');
-      }
-      if (prefs.sexuality !== 'maakt_niet_uit' || prefs.targetGender !== 'maakt_niet_uit') {
-        tips.push('Seksuele voorkeur en wederzijdse aantrekking drukken de pool vaak sterker dan mensen denken.');
-      }
-      if (prefs.bodycount !== 'maakt_niet_uit') {
-        tips.push('Bodycount is in dit model de grofste gedragsmatige schatting.');
-      }
-      if (!tips.length) {
-        tips.push('Je filters zijn redelijk haalbaar. Een volgende stap zou postcode of gemeente toevoegen zijn voor nog realistischere afstand.');
-      }
-      return tips.slice(0, 4);
-    }
-
-    function calculateForTargetGender(targetGender, prefs) {
-      const base = population[targetGender];
-      const factors = {
-        Leeftijd: getAgeFactor(prefs.ageMin, prefs.ageMax),
-        'Seksuele voorkeur': getOrientationFactor(prefs.userGender, targetGender, prefs.ageMin, prefs.ageMax, prefs.sexuality),
-        Relatiestatus: getMaritalFactor(prefs.ageMin, prefs.ageMax, prefs.marital),
-        Kinderen: getChildrenFactor(prefs.ageMin, prefs.ageMax, prefs.marital, prefs.children),
-        Opleidingsniveau: getEducationFactor(prefs.ageMin, prefs.ageMax, prefs.education),
-        Inkomen: getIncomeFactor(prefs.ageMin, prefs.ageMax, prefs.income, prefs.education),
-        Afstand: getDistanceFactor(prefs.distance, prefs.urbanity),
-        Afkomst: getOriginFactor(prefs.ageMin, prefs.ageMax, prefs.origin),
-        Bodycount: getBodycountFactor(targetGender, prefs.ageMin, prefs.ageMax, prefs.bodycount),
-        Haarkleur: hairDistribution[prefs.hair],
-        Oogkleur: eyeColorDistribution[prefs.eyeColor],
-        Gewicht: getWeightFactor(targetGender, prefs.ageMin, prefs.ageMax, prefs.weightMin, prefs.weightMax),
-        Knapheid: looksMap[prefs.looks].factor,
-      };
-
-      const count = Object.values(factors).reduce((acc, value) => acc * value, base);
-      return { targetGender, base, factors, count };
-    }
-
-    function combineResults(results) {
-      const totalBase = results.reduce((sum, result) => sum + result.base, 0);
-      const totalCount = results.reduce((sum, result) => sum + result.count, 0);
-      const labels = Object.keys(results[0].factors);
-
-      const combinedFactors = {};
-      for (const label of labels) {
-        combinedFactors[label] = results.reduce((sum, result) => sum + (result.factors[label] * result.base), 0) / totalBase;
-      }
-
-      return { totalBase, totalCount, combinedFactors };
-    }
-
-    function calculateChance() {
-      const prefs = {
-        userGender: document.getElementById('userGender').value,
-        targetGender: document.getElementById('targetGender').value,
-        sexuality: document.getElementById('sexuality').value,
-        urbanity: document.getElementById('urbanity').value,
-        ageMin: Number(document.getElementById('ageMin').value),
-        ageMax: Number(document.getElementById('ageMax').value),
-        distance: Number(document.getElementById('distance').value),
-        marital: document.getElementById('marital').value,
-        children: document.getElementById('children').value,
-        education: document.getElementById('education').value,
-        income: Number(document.getElementById('income').value),
-        origin: document.getElementById('origin').value,
-        bodycount: document.getElementById('bodycount').value,
-        hair: document.getElementById('hair').value,
-        eyeColor: document.getElementById('eyeColor').value,
-        weightMin: Number(document.getElementById('weightMin').value),
-        weightMax: Number(document.getElementById('weightMax').value),
-        looks: Number(document.getElementById('looks').value),
-      };
-
-      const selectedTargetGenders = prefs.targetGender === 'maakt_niet_uit'
-        ? ['man', 'vrouw']
-        : [prefs.targetGender];
-
-      const results = selectedTargetGenders.map(targetGender => calculateForTargetGender(targetGender, prefs));
-      const combined = combineResults(results);
-      const percent = combined.totalCount / combined.totalBase;
-      const difficulty = difficultyFromPercent(percent);
-
-      document.getElementById('matchCount').textContent = formatNumber(combined.totalCount);
-      document.getElementById('matchText').textContent = `Ongeveer ${formatNumber(combined.totalCount)} mensen vallen binnen jouw voorkeuren.`;
-      document.getElementById('matchPercent').textContent = formatPercent(percent);
-      document.getElementById('basePopulation').textContent = formatNumber(combined.totalBase);
-
-      const pill = document.getElementById('difficultyPill');
-      pill.style.display = 'inline-block';
-      pill.textContent = difficulty.label;
-      pill.className = `pill ${difficulty.className}`;
-
-      const breakdown = Object.entries(combined.combinedFactors).map(([label, factor]) => ({ label, factor }));
-      renderBreakdown(breakdown);
-      const tips = buildTips({ prefs, breakdown });
-      document.getElementById('tipsList').innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
-    }
-
-    function resetForm() {
-      document.getElementById('userGender').value = 'vrouw';
-      document.getElementById('targetGender').value = 'maakt_niet_uit';
-      document.getElementById('sexuality').value = 'maakt_niet_uit';
-      document.getElementById('urbanity').value = 'zeer_stedelijk';
-      document.getElementById('ageMin').value = 25;
-      document.getElementById('ageMax').value = 35;
-      document.getElementById('distance').value = 25;
-      document.getElementById('marital').value = 'maakt_niet_uit';
-      document.getElementById('children').value = 'maakt_niet_uit';
-      document.getElementById('education').value = 'maakt_niet_uit';
-      document.getElementById('income').value = 0;
-      document.getElementById('origin').value = 'maakt_niet_uit';
-      document.getElementById('bodycount').value = 'maakt_niet_uit';
-      document.getElementById('hair').value = 'maakt_niet_uit';
-      document.getElementById('eyeColor').value = 'maakt_niet_uit';
-      document.getElementById('weightMin').value = 55;
-      document.getElementById('weightMax').value = 85;
-      document.getElementById('looks').value = 0;
-      syncAgeSliders();
-      syncWeightSliders();
-      updateDistanceLabel();
-      updateIncomeLabel();
-      updateLooksLabel();
-      document.getElementById('matchCount').textContent = '—';
-      document.getElementById('matchText').textContent = 'Vul je voorkeuren in en bereken je kans.';
-      document.getElementById('matchPercent').textContent = '—';
-      document.getElementById('basePopulation').textContent = '—';
-      document.getElementById('difficultyPill').style.display = 'none';
-      document.getElementById('breakdown').innerHTML = '<div class="breakdown-item"><span>Nog geen berekening</span><strong>—</strong></div>';
-      document.getElementById('tipsList').innerHTML = '<li>Maak eerst een berekening om tips te zien.</li>';
-    }
-
-    syncAgeSliders();
-    syncWeightSliders();
-    updateDistanceLabel();
-    updateIncomeLabel();
-    updateLooksLabel();
-  </script>
-</body>
-</html>
+      if (hardest && hardest.factor < 0.2) tips.push(`Je strengste filter is nu: ${hardest.label.toLowerCase()}.`);
+      if (prefs.distance <= 20) tips.push('Een kleine afstand is vooral in dunner bevolkte provincies een sterke beperking.');
+      if (prefs.ageMax - prefs.ageMin <= 5) tips.push('Een bredere leeftijdsrange geeft va
